@@ -22,6 +22,10 @@ extern int mono_verify(uint8_t *data, uint32_t size) {
 extern int mono_play(uint8_t *data) {
 	if (data == NULL) {
 		return -1;
+	} else if (mono_port.play_note == NULL) {
+		return -2;
+	} else if (mono_port.play_rest == NULL) {
+		return -3;
 	}
 
 	uint32_t len = 0;
@@ -29,7 +33,7 @@ extern int mono_play(uint8_t *data) {
 	memcpy(&len, data, sizeof(len));
 	len /= sizeof(mono_event_t);
 	if (len == 0) {
-		return -2;
+		return -4;
 	}
 
 	data += 4;
