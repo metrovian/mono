@@ -3,10 +3,12 @@
 
 #include <string.h>
 
+#pragma pack(push, 1)
 typedef struct {
-	uint32_t duration_ms;
+	uint32_t duration_us;
 	uint8_t note;
 } mono_event_t;
+#pragma pack(pop)
 
 extern int mono_verify(uint8_t *data, uint32_t size) {
 	if (data == NULL ||
@@ -36,15 +38,15 @@ extern int mono_play(uint8_t *data) {
 		return -4;
 	}
 
-	data += 4;
+	data += sizeof(len);
 	for (uint32_t i = 0; i < len; ++i) {
 		mono_event_t event = {0};
 		memcpy(&event, data, sizeof(mono_event_t));
 		if (event.note == 0) {
-			mono_port.play_rest(event.duration_ms);
+			mono_port.play_rest(event.duration_us);
 		} else {
 			mono_port.play_note(
-			    event.duration_ms,
+			    event.duration_us,
 			    event.note);
 		}
 
