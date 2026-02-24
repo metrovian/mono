@@ -1,4 +1,4 @@
-# metrovian command
+# mono reader
 src_reader = files(
   'source/event.c',
   'source/port.c',

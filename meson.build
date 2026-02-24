@@ -10,3 +10,4 @@ project(
 
 # subdir
 subdir('reader')
+subdir('writer')
