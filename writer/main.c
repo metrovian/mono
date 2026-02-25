@@ -1,9 +1,8 @@
+#include "abc/export.h"
+#include "mono/export.h"
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-
-extern int mono_parse(const char *path, uint8_t *data);
-extern int mono_create(const char *path, uint8_t *data, uint32_t size);
 
 int main(int argc, char **argv) {
 	if (argc != 3) {

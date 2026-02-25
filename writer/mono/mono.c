@@ -1,5 +1,6 @@
+#include "mono/export.h"
+
 #include <stdio.h>
-#include <stdint.h>
 
 extern int mono_create(const char *path, uint8_t *data, uint32_t size) {
 	FILE *fp = fopen(path, "wb");

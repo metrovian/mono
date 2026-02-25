@@ -1,9 +1,10 @@
 # mono writer
 src_writer = files(
-  'source/main.c',
-  'source/parser.c',
-  'source/writer.c')
+  'abc/abc.c',
+  'mono/mono.c',
+  'main.c')
 
 executable(
   'mono',
-  src_writer)
+  src_writer,
+  include_directories: '.')
