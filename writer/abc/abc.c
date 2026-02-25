@@ -147,7 +147,7 @@ static void read_score(mono_ctx_t *ctx) {
 	return;
 }
 
-extern int mono_parse(const char *path, uint8_t *data) {
+extern int abc_parse(const char *path, uint8_t *data) {
 	mono_ctx_t ctx = {0};
 	ctx.fp = fopen(path, "r");
 	if (ctx.fp == NULL) {

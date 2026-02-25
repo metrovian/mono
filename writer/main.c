@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
 
 	const char *input = argv[1];
 	const char *output = argv[2];
-	int size = mono_parse(input, NULL);
+	int size = abc_parse(input, NULL);
 	if (size < 0) {
 		fprintf(stderr, "failed to parse abc format\n");
 		return -2;
@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 	if (data == NULL) {
 		fprintf(stderr, "failed to allocate memory\n");
 		return -3;
-	} else if (mono_parse(input, data) != size) {
+	} else if (abc_parse(input, data) != size) {
 		fprintf(stderr, "failed to parse abc format\n");
 		return -4;
 	} else if (mono_create(output, data, size) != 0) {
