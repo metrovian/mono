@@ -17,10 +17,10 @@ extern int abc_parse(const char *path, uint8_t *data) {
 	parser_read_header(&ctx);
 	parser_read_body(&ctx);
 	if (data == NULL) {
-		return sizeof(abc_event_t) * ctx.size;
+		return sizeof(abc_event_t) * ctx.buffer.size;
 	}
 
-	memcpy(data, ctx.buffer, sizeof(abc_event_t) * ctx.size);
+	memcpy(data, ctx.buffer.data, sizeof(abc_event_t) * ctx.buffer.size);
 	buffer_destroy(&ctx);
-	return sizeof(abc_event_t) * ctx.size;
+	return sizeof(abc_event_t) * ctx.buffer.size;
 }

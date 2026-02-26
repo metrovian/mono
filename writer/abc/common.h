@@ -10,12 +10,20 @@ typedef struct {
 #pragma pack(pop)
 
 typedef struct {
-	FILE *fp;
-	abc_event_t *buffer;
 	uint32_t capacity;
 	uint32_t size;
+	abc_event_t *data;
+} abc_buffer_t;
+
+typedef struct {
 	uint32_t duration_us;
 	uint8_t key;
+} abc_meta_t;
+
+typedef struct {
+	FILE *fp;
+	abc_buffer_t buffer;
+	abc_meta_t meta;
 } abc_ctx_t;
 
 extern int buffer_create(abc_ctx_t *ctx);

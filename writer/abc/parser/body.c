@@ -66,7 +66,7 @@ extern void parser_read_body(abc_ctx_t *ctx) {
 
 			static const uint8_t semitone[7] = {9, 11, 0, 2, 4, 5, 7};
 			abc_event_t event = {0};
-			event.duration_us = (ctx->duration_us * num) / den;
+			event.duration_us = (ctx->meta.duration_us * num) / den;
 			event.note = semitone[note - 'A'] + 12 * (octave + 5);
 			buffer_push(ctx, &event);
 		}

@@ -23,6 +23,6 @@ extern void parser_read_header(abc_ctx_t *ctx) {
 		}
 	}
 
-	ctx->duration_us = (240000000UL * base_num) / base_den / base_bpm;
+	ctx->meta.duration_us = (240000000UL * base_num) / base_den / base_bpm;
 	return;
 }
