@@ -80,8 +80,9 @@ static int process_name(abc_ctx_t *ctx, abc_note_t *note) {
 	    now <= 'g') {
 		now -= 'g' - 'G';
 		++note->octave;
-	} else if (
-	    now >= 'A' &&
+	}
+
+	if (now >= 'A' &&
 	    now <= 'G') {
 		note->name = now;
 		process_octave(ctx, note);
