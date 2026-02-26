@@ -2,75 +2,153 @@
 
 #include <ctype.h>
 
+typedef struct {
+	int accidental;
+	int name;
+	int octave;
+	int duration_num;
+	int duration_den;
+} abc_note_t;
+
+static int process_note(abc_ctx_t *ctx);
+static int process_accidental(abc_ctx_t *ctx, abc_note_t *note);
+static int process_name(abc_ctx_t *ctx, abc_note_t *note);
+static void process_octave(abc_ctx_t *ctx, abc_note_t *note);
+static void process_duration(abc_ctx_t *ctx, abc_note_t *note);
+static void process_push(abc_ctx_t *ctx, abc_note_t *note);
+
 extern void parser_read_body(abc_ctx_t *ctx) {
-	int note = 0;
-	while ((note = fgetc(ctx->fp)) != EOF) {
-		if (note == ' ' ||
-		    note == '|' ||
-		    note == '\n') {
-			continue;
-		}
-
-		int octave = 0;
-		if (note >= 'a' &&
-		    note <= 'g') {
-			note -= 'g' - 'G';
-			++octave;
-		}
-
-		if (note >= 'A' &&
-		    note <= 'G') {
-			int next = fgetc(ctx->fp);
-			if (octave == 1) {
-				if (next == '\'') {
-					next = fgetc(ctx->fp);
-					if (next == '\'') {
-						++octave;
-					} else {
-						ungetc(next, ctx->fp);
-					}
-
-					++octave;
-				}
-			} else {
-				if (next == ',') {
-					next = fgetc(ctx->fp);
-					if (next == ',') {
-						--octave;
-					} else {
-						ungetc(next, ctx->fp);
-					}
-
-					--octave;
-				}
-			}
-
-			int num = 1;
-			if (isdigit(next) != 0) {
-				num = next - '0';
-				next = fgetc(ctx->fp);
-			}
-
-			int den = 1;
-			if (next == '/') {
-				next = fgetc(ctx->fp);
-				if (isdigit(next) != 0) {
-					den = next - '0';
-				} else {
-					den = 2;
-					ungetc(next, ctx->fp);
-				}
-			} else {
-				ungetc(next, ctx->fp);
-			}
-
-			static const uint8_t semitone[7] = {9, 11, 0, 2, 4, 5, 7};
-			abc_event_t event = {0};
-			event.duration_us = (ctx->meta.duration_us * num) / den;
-			event.note = semitone[note - 'A'] + 12 * (octave + 5);
-			buffer_push(ctx, &event);
-		}
+	while (process_note(ctx) != EOF) {
+		// continue;
 	}
 
+	return;
+}
+
+static int process_note(abc_ctx_t *ctx) {
+	abc_note_t note = {0};
+	if (process_accidental(ctx, &note) == EOF) {
+		return EOF;
+	}
+
+	return process_name(ctx, &note);
+}
+
+static int process_accidental(abc_ctx_t *ctx, abc_note_t *note) {
+	int now = fgetc(ctx->fp);
+	if (now == EOF) {
+		return EOF;
+	}
+
+	switch (now) {
+	case '^':
+		now = fgetc(ctx->fp);
+		if (now == '^') {
+			note->accidental += 2;
+		} else {
+			note->accidental += 1;
+			ungetc(now, ctx->fp);
+		}
+		break;
+	case '_':
+		now = fgetc(ctx->fp);
+		if (now == '_') {
+			note->accidental -= 2;
+		} else {
+			note->accidental -= 1;
+			ungetc(now, ctx->fp);
+		}
+		break;
+	case '=':
+		note->accidental = 0;
+		break;
+	default:
+		ungetc(now, ctx->fp);
+		break;
+	}
+
+	return 0;
+}
+
+static int process_name(abc_ctx_t *ctx, abc_note_t *note) {
+	int now = fgetc(ctx->fp);
+	if (now == EOF) {
+		return EOF;
+	}
+
+	if (now >= 'a' &&
+	    now <= 'g') {
+		now -= 'g' - 'G';
+		++note->octave;
+	} else if (
+	    now >= 'A' &&
+	    now <= 'G') {
+		note->name = now;
+		process_octave(ctx, note);
+		process_duration(ctx, note);
+		process_push(ctx, note);
+	}
+
+	return 0;
+}
+
+static void process_octave(abc_ctx_t *ctx, abc_note_t *note) {
+	int now = fgetc(ctx->fp);
+	if (now == '\'') {
+		now = fgetc(ctx->fp);
+		if (now == '\'') {
+			++note->octave;
+		} else {
+			ungetc(now, ctx->fp);
+		}
+
+		++note->octave;
+	} else if (now == ',') {
+		now = fgetc(ctx->fp);
+		if (now == ',') {
+			--note->octave;
+		} else {
+			ungetc(now, ctx->fp);
+		}
+
+		--note->octave;
+	} else {
+		ungetc(now, ctx->fp);
+	}
+
+	return;
+}
+
+static void process_duration(abc_ctx_t *ctx, abc_note_t *note) {
+	int now = fgetc(ctx->fp);
+	if (isdigit(now) != 0) {
+		note->duration_num = now - '0';
+		now = fgetc(ctx->fp);
+	} else {
+		note->duration_num = 1;
+	}
+
+	if (now == '/') {
+		now = fgetc(ctx->fp);
+		if (isdigit(now) != 0) {
+			note->duration_den = now - '0';
+		} else {
+			note->duration_den = 2;
+			ungetc(now, ctx->fp);
+		}
+	} else {
+		note->duration_den = 1;
+		ungetc(now, ctx->fp);
+	}
+
+	return;
+}
+
+static void process_push(abc_ctx_t *ctx, abc_note_t *note) {
+	static const uint8_t semitone[7] = {9, 11, 0, 2, 4, 5, 7};
+	abc_event_t event = {0};
+	event.duration_us = (ctx->meta.duration_us * note->duration_num) / note->duration_den;
+	event.note = note->accidental + semitone[note->name - 'A'] + 12 * (note->octave + 5);
+	buffer_push(ctx, &event);
 	return;
 }
