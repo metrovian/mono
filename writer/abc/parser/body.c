@@ -94,27 +94,16 @@ static int process_name(abc_ctx_t *ctx, abc_note_t *note) {
 }
 
 static void process_octave(abc_ctx_t *ctx, abc_note_t *note) {
-	int now = fgetc(ctx->fp);
-	if (now == '\'') {
-		now = fgetc(ctx->fp);
+	int now = 0;
+	while ((now = fgetc(ctx->fp)) != EOF) {
 		if (now == '\'') {
 			++note->octave;
-		} else {
-			ungetc(now, ctx->fp);
-		}
-
-		++note->octave;
-	} else if (now == ',') {
-		now = fgetc(ctx->fp);
-		if (now == ',') {
+		} else if (now == ',') {
 			--note->octave;
 		} else {
 			ungetc(now, ctx->fp);
+			break;
 		}
-
-		--note->octave;
-	} else {
-		ungetc(now, ctx->fp);
 	}
 
 	return;
