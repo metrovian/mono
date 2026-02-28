@@ -88,6 +88,12 @@ static int process_name(abc_ctx_t *ctx, abc_note_t *note) {
 		process_octave(ctx, note);
 		process_duration(ctx, note);
 		process_push(ctx, note);
+	} else if (now == 'z') {
+		note->name = 'C';
+		note->accidental = 0;
+		note->octave = -5;
+		process_duration(ctx, note);
+		process_push(ctx, note);
 	}
 
 	return 0;
