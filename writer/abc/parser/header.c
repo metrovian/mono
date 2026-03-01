@@ -10,10 +10,13 @@ extern void parser_read_header(abc_ctx_t *ctx) {
 	uint32_t base_bpm = 120;
 	uint32_t base_num = 1;
 	uint32_t base_den = 4;
-	while (fgets(line, sizeof(line), ctx->fp) != NULL) {
-		if (strlen(line) < 2) {
+	while (1) {
+		long pos = ftell(ctx->fp);
+		if (fgets(line, sizeof(line), ctx->fp) == NULL ||
+		    strlen(line) < 2) {
 			break;
 		} else if (line[1] != ':') {
+			fseek(ctx->fp, pos, SEEK_SET);
 			break;
 		}
 
