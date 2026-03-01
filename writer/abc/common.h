@@ -17,7 +17,7 @@ typedef struct {
 
 typedef struct {
 	uint32_t duration_us;
-	uint8_t key;
+	int accidental[7];
 } abc_meta_t;
 
 typedef struct {
