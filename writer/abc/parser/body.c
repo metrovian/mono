@@ -60,7 +60,7 @@ static int process_accidental(abc_ctx_t *ctx, abc_note_t *note) {
 		}
 		break;
 	case '=':
-		note->accidental = 0;
+		note->accidental = now;
 		break;
 	default:
 		ungetc(now, ctx->fp);
@@ -85,7 +85,12 @@ static int process_name(abc_ctx_t *ctx, abc_note_t *note) {
 	if (now >= 'A' &&
 	    now <= 'G') {
 		note->name = now;
-		note->accidental += ctx->meta.accidental[now - 'A'];
+		if (note->accidental == '=') {
+			note->accidental = 0;
+		} else {
+			note->accidental += ctx->meta.accidental[now - 'A'];
+		}
+
 		process_octave(ctx, note);
 		process_duration(ctx, note);
 		process_push(ctx, note);
