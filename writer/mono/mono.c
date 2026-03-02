@@ -36,17 +36,17 @@ static void write_magic(mono_ctx_t *ctx) {
 }
 
 static void write_size(mono_ctx_t *ctx, uint32_t size) {
-	uint8_t bits[4] = {0};
+	uint8_t bytes[4] = {0};
 	for (uint8_t i = 0; i < 4; ++i) {
-		bits[i] = (size >> (8 * i)) & 0xFF;
+		bytes[i] = (size >> (8 * i)) & 0xFF;
 	}
 
-	write_payload(ctx, bits, sizeof(bits));
+	write_payload(ctx, bytes, sizeof(bytes));
 	return;
 }
 
 static void write_payload(mono_ctx_t *ctx, uint8_t *data, uint32_t size) {
-	for (uint32_t i = 0; i < size; i++) {
+	for (uint32_t i = 0; i < size; ++i) {
 		if (ctx->count % 12 == 0) {
 			fprintf(ctx->fp, "  ");
 		}
