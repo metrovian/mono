@@ -10,7 +10,7 @@ typedef struct {
 } mono_event_t;
 #pragma pack(pop)
 
-extern int mono_verify(uint8_t *data, uint32_t size) {
+extern int mono_verify(const uint8_t *data, uint32_t size) {
 	if (data == NULL ||
 	    size < 8) {
 		return -1;
@@ -21,7 +21,7 @@ extern int mono_verify(uint8_t *data, uint32_t size) {
 	return 0;
 }
 
-extern int mono_play(uint8_t *data) {
+extern int mono_play(const uint8_t *data) {
 	if (data == NULL) {
 		return -1;
 	} else if (mono_port.play_note == NULL) {
