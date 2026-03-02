@@ -3,6 +3,7 @@
 #include <string.h>
 
 static void process_accidental(const char *ptr, abc_ctx_t *ctx);
+static int minor_fifths(char root, char accidental);
 static int major_fifths(char root, char accidental);
 
 extern void parser_read_header(abc_ctx_t *ctx) {
@@ -63,7 +64,13 @@ static void process_accidental(const char *ptr, abc_ctx_t *ctx) {
 		++ptr;
 	}
 
-	int fifths = major_fifths(root, accidental);
+	int fifths = 0;
+	if (*ptr == 'm') {
+		fifths = minor_fifths(root, accidental);
+	} else {
+		fifths = major_fifths(root, accidental);
+	}
+
 	if (fifths > 0) {
 		for (uint8_t i = 0; i < fifths; ++i) {
 			ctx->meta.accidental[sharp_order[i]] = 1;
@@ -75,6 +82,15 @@ static void process_accidental(const char *ptr, abc_ctx_t *ctx) {
 	}
 
 	return;
+}
+
+static int minor_fifths(char root, char accidental) {
+	if (root < 'A' ||
+	    root > 'G') {
+		return 0;
+	}
+
+	return major_fifths(root, accidental + 3);
 }
 
 static int major_fifths(char root, char accidental) {
