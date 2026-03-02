@@ -16,10 +16,10 @@ int main(int argc, char **argv) {
 	int size = abc_parse(input, &data);
 	if (size < 0) {
 		fprintf(stderr, "failed to parse abc format\n");
-		return -3;
+		return -2;
 	} else if (mono_create(output, data, size) != 0) {
 		fprintf(stderr, "failed to create mono format\n");
-		return -4;
+		return -3;
 	}
 
 	free(data);
