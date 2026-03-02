@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern int abc_parse(const char *path, uint8_t *data) {
+extern int abc_parse(const char *path, uint8_t **data) {
 	abc_ctx_t ctx = {0};
 	ctx.fp = fopen(path, "r");
 	if (ctx.fp == NULL) {
@@ -16,11 +16,12 @@ extern int abc_parse(const char *path, uint8_t *data) {
 
 	parser_read_header(&ctx);
 	parser_read_body(&ctx);
-	if (data == NULL) {
-		return sizeof(abc_event_t) * ctx.buffer.size;
+	*data = malloc(sizeof(abc_event_t) * ctx.buffer.size);
+	if (*data == NULL) {
+		return -3;
 	}
 
-	memcpy(data, ctx.buffer.data, sizeof(abc_event_t) * ctx.buffer.size);
+	memcpy(*data, ctx.buffer.data, sizeof(abc_event_t) * ctx.buffer.size);
 	buffer_destroy(&ctx);
 	return sizeof(abc_event_t) * ctx.buffer.size;
 }

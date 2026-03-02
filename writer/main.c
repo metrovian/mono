@@ -12,26 +12,18 @@ int main(int argc, char **argv) {
 
 	const char *input = argv[1];
 	const char *output = argv[2];
-	int size = abc_parse(input, NULL);
+	uint8_t *data = NULL;
+	int size = abc_parse(input, &data);
 	if (size < 0) {
 		fprintf(stderr, "failed to parse abc format\n");
-		return -2;
-	}
-
-	uint8_t *data = malloc(size);
-	if (data == NULL) {
-		fprintf(stderr, "failed to allocate memory\n");
 		return -3;
-	} else if (abc_parse(input, data) != size) {
-		fprintf(stderr, "failed to parse abc format\n");
-		return -4;
 	} else if (mono_create(output, data, size) != 0) {
 		fprintf(stderr, "failed to create mono format\n");
-		return -5;
+		return -4;
 	}
 
-	fprintf(stderr, "created %s\n", output);
 	free(data);
 	data = NULL;
+	fprintf(stderr, "created %s\n", output);
 	return 0;
 }
