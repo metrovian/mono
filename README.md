@@ -1,4 +1,4 @@
 ## MONO
-- Binary score to event callback
-- Musical notation to static const hexdump conversion
+- Binary score to audio callback
+- Musical notation to static constant array conversion
 <br></br>
