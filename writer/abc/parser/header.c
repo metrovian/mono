@@ -2,15 +2,30 @@
 
 #include <string.h>
 
+typedef struct {
+	uint32_t unit_num;
+	uint32_t unit_den;
+	uint32_t tempo_num;
+	uint32_t tempo_den;
+	uint32_t bpm;
+} abc_duration_t;
+
+static void process_unit(const char *ptr, abc_duration_t *duration);
+static void process_tempo(const char *ptr, abc_duration_t *duration);
 static void process_accidental(const char *ptr, abc_ctx_t *ctx);
 static int minor_fifths(char root, char accidental);
 static int major_fifths(char root, char accidental);
 
 extern void parser_read_header(abc_ctx_t *ctx) {
+	abc_duration_t duration = {
+	    .unit_num = 1,
+	    .unit_den = 4,
+	    .tempo_num = 1,
+	    .tempo_den = 4,
+	    .bpm = 120,
+	};
+
 	char line[256] = {0};
-	uint32_t base_bpm = 120;
-	uint32_t base_num = 1;
-	uint32_t base_den = 4;
 	while (1) {
 		long pos = ftell(ctx->fp);
 		if (fgets(line, sizeof(line), ctx->fp) == NULL ||
@@ -23,7 +38,10 @@ extern void parser_read_header(abc_ctx_t *ctx) {
 
 		switch (line[0]) {
 		case 'L':
-			sscanf(line + 2, "%u/%u", &base_num, &base_den);
+			process_unit(line + 2, &duration);
+			break;
+		case 'Q':
+			process_tempo(line + 2, &duration);
 			break;
 		case 'K':
 			process_accidental(line + 2, ctx);
@@ -33,7 +51,37 @@ extern void parser_read_header(abc_ctx_t *ctx) {
 		}
 	}
 
-	ctx->meta.duration_us = (240000000UL * base_num) / base_den / base_bpm;
+	ctx->meta.duration_us = 60000000UL;
+	ctx->meta.duration_us *= duration.unit_num * duration.tempo_den;
+	ctx->meta.duration_us /= duration.unit_den * duration.tempo_num * duration.bpm;
+	return;
+}
+
+static void process_unit(const char *ptr, abc_duration_t *duration) {
+	if (sscanf(
+		ptr,
+		"%u/%u",
+		&duration->unit_num,
+		&duration->unit_den) != 2) {
+		duration->unit_num = 1;
+		duration->unit_den = 4;
+	}
+
+	return;
+}
+
+static void process_tempo(const char *ptr, abc_duration_t *duration) {
+	if (sscanf(
+		ptr,
+		"%u/%u=%u",
+		&duration->tempo_num,
+		&duration->tempo_den,
+		&duration->bpm) != 3) {
+		duration->tempo_num = 1;
+		duration->tempo_den = 4;
+		sscanf(ptr, "%u", &duration->bpm);
+	}
+
 	return;
 }
 
