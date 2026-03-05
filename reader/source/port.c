@@ -1,6 +1,8 @@
 #include "mono_export.h"
 #include "common.h"
 
+mono_port_t mono_port = {0};
+
 extern int mono_link(
     void (*play_note)(uint32_t, uint8_t),
     void (*play_rest)(uint32_t)) {
