@@ -23,13 +23,8 @@ typedef struct {
 	alsa_buffer_t buffer;
 } alsa_ctx_t;
 static alsa_ctx_t alsa_ctx = {
-    .handle = NULL,
     .channel = 1,
     .sample_rate = 44100,
-    .buffer = {
-	.note = {0},
-	.rest = {0},
-    },
 };
 
 static uint64_t loop_count(uint32_t duration_us);
