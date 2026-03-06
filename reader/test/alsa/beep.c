@@ -67,7 +67,7 @@ extern void alsa_play_note(uint32_t duration_us, uint8_t note) {
 	double step = step_phase(note);
 	double phase = 0.0;
 	for (uint64_t i = 0; i < loop; ++i) {
-		for (uint64_t j = 0; j < ALSA_BUFFER_SIZE; j++) {
+		for (uint64_t j = 0; j < ALSA_BUFFER_SIZE; ++j) {
 			alsa_ctx.buffer.note[j] = (phase < 0.5) ? ALSA_VOLUME : -ALSA_VOLUME;
 			phase += step;
 			if (phase >= 1.0) {
