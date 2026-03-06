@@ -1,6 +1,6 @@
 #include "mono_export.h"
-#include "common.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #pragma pack(push, 1)
@@ -9,6 +9,26 @@ typedef struct {
 	uint8_t note;
 } mono_event_t;
 #pragma pack(pop)
+
+typedef struct {
+	void (*play_note)(uint32_t, uint8_t);
+	void (*play_rest)(uint32_t);
+} mono_port_t;
+static mono_port_t mono_port = {0};
+
+extern int mono_link(
+    void (*play_note)(uint32_t, uint8_t),
+    void (*play_rest)(uint32_t)) {
+	if (play_note == NULL) {
+		return -1;
+	} else if (play_rest == NULL) {
+		return -2;
+	}
+
+	mono_port.play_note = play_note;
+	mono_port.play_rest = play_rest;
+	return 0;
+}
 
 extern int mono_verify(const uint8_t *data, uint32_t size) {
 	if (data == NULL ||
