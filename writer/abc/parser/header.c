@@ -51,9 +51,9 @@ extern void parser_read_header(abc_ctx_t *ctx) {
 		}
 	}
 
-	ctx->meta.duration_us = 60000000UL;
-	ctx->meta.duration_us *= duration.unit_num * duration.tempo_den;
-	ctx->meta.duration_us /= duration.unit_den * duration.tempo_num * duration.bpm;
+	ctx->meta.duration_ms = 60000UL;
+	ctx->meta.duration_ms *= duration.unit_num * duration.tempo_den;
+	ctx->meta.duration_ms /= duration.unit_den * duration.tempo_num * duration.bpm;
 	return;
 }
 

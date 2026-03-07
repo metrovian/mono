@@ -7,7 +7,7 @@
 
 #define ALSA_BUFFER_SIZE 64
 #define ALSA_RELEASE_TIME_MS 10
-#define ALSA_MICRO 1000000
+#define ALSA_UNIT_TIME 1000
 #define ALSA_A4 440
 #define ALSA_VOLUME 30000
 
@@ -27,7 +27,7 @@ static alsa_ctx_t alsa_ctx = {
     .sample_rate = 44100,
 };
 
-static uint64_t loop_count(uint32_t duration_us);
+static uint64_t loop_count(uint16_t duration_ms);
 static double step_phase(uint8_t note);
 
 extern int alsa_open() {
@@ -62,8 +62,8 @@ extern void alsa_close() {
 	return;
 }
 
-extern void alsa_play_note(uint32_t duration_us, uint8_t note) {
-	uint64_t loop = loop_count(duration_us - ALSA_RELEASE_TIME_MS * 1000);
+extern void alsa_play_note(uint16_t duration_ms, uint8_t note) {
+	uint64_t loop = loop_count(duration_ms - ALSA_RELEASE_TIME_MS);
 	double step = step_phase(note);
 	double phase = 0.0;
 	for (uint64_t i = 0; i < loop; ++i) {
@@ -81,12 +81,12 @@ extern void alsa_play_note(uint32_t duration_us, uint8_t note) {
 		    ALSA_BUFFER_SIZE);
 	}
 
-	alsa_play_rest(ALSA_RELEASE_TIME_MS * 1000);
+	alsa_play_rest(ALSA_RELEASE_TIME_MS);
 	return;
 }
 
-extern void alsa_play_rest(uint32_t duration_us) {
-	uint64_t loop = loop_count(duration_us);
+extern void alsa_play_rest(uint16_t duration_ms) {
+	uint64_t loop = loop_count(duration_ms);
 	for (uint64_t i = 0; i < loop; ++i) {
 		snd_pcm_writei(
 		    alsa_ctx.handle,
@@ -97,10 +97,10 @@ extern void alsa_play_rest(uint32_t duration_us) {
 	return;
 }
 
-static uint64_t loop_count(uint32_t duration_us) {
-	uint64_t loop = duration_us;
+static uint64_t loop_count(uint16_t duration_ms) {
+	uint64_t loop = duration_ms;
 	loop *= alsa_ctx.sample_rate;
-	loop /= ALSA_MICRO;
+	loop /= ALSA_UNIT_TIME;
 	loop /= ALSA_BUFFER_SIZE;
 	return loop;
 }

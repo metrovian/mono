@@ -5,20 +5,20 @@
 
 #pragma pack(push, 1)
 typedef struct {
-	uint32_t duration_us;
+	uint16_t duration_ms;
 	uint8_t note;
 } mono_event_t;
 #pragma pack(pop)
 
 typedef struct {
-	void (*play_note)(uint32_t, uint8_t);
-	void (*play_rest)(uint32_t);
+	void (*play_note)(uint16_t, uint8_t);
+	void (*play_rest)(uint16_t);
 } mono_port_t;
 static mono_port_t mono_port = {0};
 
 extern int mono_link(
-    void (*play_note)(uint32_t, uint8_t),
-    void (*play_rest)(uint32_t)) {
+    void (*play_note)(uint16_t, uint8_t),
+    void (*play_rest)(uint16_t)) {
 	if (play_note == NULL) {
 		return -1;
 	} else if (play_rest == NULL) {
@@ -63,10 +63,10 @@ extern int mono_play(const uint8_t *data) {
 		mono_event_t event = {0};
 		memcpy(&event, data, sizeof(mono_event_t));
 		if (event.note == 0) {
-			mono_port.play_rest(event.duration_us);
+			mono_port.play_rest(event.duration_ms);
 		} else {
 			mono_port.play_note(
-			    event.duration_us,
+			    event.duration_ms,
 			    event.note);
 		}
 

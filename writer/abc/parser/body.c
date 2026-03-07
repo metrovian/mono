@@ -149,7 +149,7 @@ static void process_duration(abc_ctx_t *ctx, abc_note_t *note) {
 static void process_push(abc_ctx_t *ctx, abc_note_t *note) {
 	static const uint8_t semitone[7] = {9, 11, 0, 2, 4, 5, 7};
 	abc_event_t event = {0};
-	event.duration_us = (ctx->meta.duration_us * note->duration_num) / note->duration_den;
+	event.duration_ms = (ctx->meta.duration_ms * note->duration_num) / note->duration_den;
 	event.note = note->accidental + semitone[note->name - 'A'] + (note->octave + 5) * 12;
 	buffer_push(ctx, &event);
 	return;

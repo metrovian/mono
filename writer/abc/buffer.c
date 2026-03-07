@@ -22,7 +22,7 @@ extern void buffer_destroy(abc_ctx_t *ctx) {
 
 extern void buffer_push(abc_ctx_t *ctx, abc_event_t *event) {
 	abc_buffer_t *buffer = &ctx->buffer;
-	buffer->data[buffer->size].duration_us = event->duration_us;
+	buffer->data[buffer->size].duration_ms = event->duration_ms;
 	buffer->data[buffer->size].note = event->note;
 	++buffer->size;
 	if (buffer->capacity < buffer->size) {

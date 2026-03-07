@@ -4,7 +4,7 @@
 
 #pragma pack(push, 1)
 typedef struct {
-	uint32_t duration_us;
+	uint16_t duration_ms;
 	uint8_t note;
 } abc_event_t;
 #pragma pack(pop)
@@ -16,7 +16,7 @@ typedef struct {
 } abc_buffer_t;
 
 typedef struct {
-	uint32_t duration_us;
+	uint32_t duration_ms;
 	int accidental[7];
 } abc_meta_t;
 
