@@ -1,0 +1,23 @@
+[binaries]
+c = 'avr-gcc'
+ar = 'avr-ar'
+strip = 'avr-strip'
+objcopy = 'avr-objcopy'
+
+[properties]
+needs_exe_wrapper = true
+
+[built-in options]
+c_args = [
+  '-mmcu=attiny85',
+  '-DF_CPU=8000000UL',
+  '-Os']
+
+c_link_args = [
+  '-mmcu=attiny85']
+
+[host_machine]
+system = 'baremetal'
+cpu_family = 'avr'
+cpu = 'attiny85'
+endian = 'little'
