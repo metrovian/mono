@@ -9,6 +9,7 @@ project(
     'buildtype=release'])
 
 src_atiny85 = files(
+  'mono/mono.c',
   'main.c')
 
 elf_atiny85 = executable(
