@@ -25,20 +25,37 @@ static const uint16_t period_us[] PROGMEM = {
     239, 225, 213, 201, 190, 179, 169, 159,
     150, 142, 134, 127, 119, 113, 106, 100, 95, 89, 84, 80};
 
+static void gpio_input();
+static void gpio_output();
 static void gpio_play_note(uint16_t duration_ms, uint8_t note);
 static void gpio_play_rest(uint16_t duration_ms);
 static void delay_us(uint16_t duration_us);
 
 int main(void) {
-	DDRB |= (1 << GPIO_PIN);
+	gpio_input();
 	mono_link(gpio_play_note, gpio_play_rest);
 	assert(mono_verify(mono_data, sizeof(mono_data)) == 0);
 	while (1) {
-		mono_play(mono_data);
-		gpio_play_rest(10000);
+		if ((PINB & (1 << PB1)) != 0) {
+			gpio_output();
+			mono_play(mono_data);
+			gpio_play_rest(500);
+			gpio_input();
+		}
 	}
 
 	return 0;
+}
+
+static void gpio_input() {
+	DDRB &= ~(1 << PB1);
+	PORTB |= (1 << PB1);
+	return;
+}
+
+static void gpio_output() {
+	DDRB |= (1 << PB1);
+	return;
 }
 
 static void gpio_play_note(uint16_t duration_ms, uint8_t note) {
