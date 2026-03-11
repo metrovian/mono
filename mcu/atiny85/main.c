@@ -1,6 +1,7 @@
 #include "mono/mono_export.h"
 #include "example.h"
 
+#include <assert.h>
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
@@ -31,10 +32,7 @@ static void delay_us(uint16_t duration_us);
 int main(void) {
 	DDRB |= (1 << GPIO_PIN);
 	mono_link(gpio_play_note, gpio_play_rest);
-	if (mono_verify(mono_data, sizeof(mono_data)) != 0) {
-		return -1;
-	}
-
+	assert(mono_verify(mono_data, sizeof(mono_data)) == 0);
 	while (1) {
 		mono_play(mono_data);
 		gpio_play_rest(10000);
