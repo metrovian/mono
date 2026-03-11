@@ -36,7 +36,7 @@ int main(void) {
 	mono_link(gpio_play_note, gpio_play_rest);
 	assert(mono_verify(mono_data, sizeof(mono_data)) == 0);
 	while (1) {
-		if ((PINB & (1 << PB1)) != 0) {
+		if ((PINB & (1 << GPIO_PIN)) != 0) {
 			gpio_output();
 			mono_play(mono_data);
 			gpio_play_rest(500);
@@ -48,13 +48,13 @@ int main(void) {
 }
 
 static void gpio_input() {
-	DDRB &= ~(1 << PB1);
-	PORTB |= (1 << PB1);
+	DDRB &= ~(1 << GPIO_PIN);
+	PORTB |= (1 << GPIO_PIN);
 	return;
 }
 
 static void gpio_output() {
-	DDRB |= (1 << PB1);
+	DDRB |= (1 << GPIO_PIN);
 	return;
 }
 
