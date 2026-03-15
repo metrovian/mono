@@ -20,7 +20,7 @@ extern int mono_create(const char *path, uint8_t *data, uint32_t size) {
 
 	fprintf(ctx.fp, "#pragma once\n");
 	fprintf(ctx.fp, "#include <stdint.h>\n\n");
-	fprintf(ctx.fp, "static const uint8_t mono_data[] = {\n");
+	fprintf(ctx.fp, "static const uint8_t mono_data[] PROGMEM = {\n");
 	write_magic(&ctx);
 	write_size(&ctx, size);
 	write_payload(&ctx, data, size);

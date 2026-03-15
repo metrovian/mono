@@ -1,5 +1,12 @@
 #pragma once
 #include <stdint.h>
+#ifdef __AVR__
+#include <avr/pgmspace.h>
+#else
+#define PROGMEM
+#define memcpy_P memcpy
+#define memcmp_P memcmp
+#endif
 
 extern int mono_link(
     void (*play_note)(uint16_t duration_ms, uint8_t note),

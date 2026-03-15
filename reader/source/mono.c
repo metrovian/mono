@@ -34,7 +34,7 @@ extern int mono_verify(const uint8_t *data, uint32_t size) {
 	if (data == NULL ||
 	    size < 8) {
 		return -1;
-	} else if (memcmp(data, "mono", 4) != 0) {
+	} else if (memcmp_P(data, "mono", 4) != 0) {
 		return -2;
 	}
 
@@ -52,7 +52,7 @@ extern int mono_play(const uint8_t *data) {
 
 	uint32_t len = 0;
 	data += 4;
-	memcpy(&len, data, sizeof(len));
+	memcpy_P(&len, data, sizeof(len));
 	len /= sizeof(mono_event_t);
 	if (len == 0) {
 		return -4;
@@ -61,7 +61,7 @@ extern int mono_play(const uint8_t *data) {
 	data += sizeof(len);
 	for (uint32_t i = 0; i < len; ++i) {
 		mono_event_t event = {0};
-		memcpy(&event, data, sizeof(mono_event_t));
+		memcpy_P(&event, data, sizeof(mono_event_t));
 		if (event.note == 0) {
 			mono_port.play_rest(event.duration_ms);
 		} else {
