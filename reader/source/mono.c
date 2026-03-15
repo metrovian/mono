@@ -34,7 +34,7 @@ extern int mono_verify(const uint8_t *data, uint32_t size) {
 	if (data == NULL ||
 	    size < 8) {
 		return -1;
-	} else if (memcmp_P(data, "mono", 4) != 0) {
+	} else if (memcmp_P("mono", data, 4) != 0) {
 		return -2;
 	}
 
