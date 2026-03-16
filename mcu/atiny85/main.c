@@ -68,9 +68,15 @@ static void gpio_play_rest(uint16_t duration_ms) {
 }
 
 static void delay_us(uint16_t duration_us) {
-	while (duration_us--) {
-		_delay_us(1);
-	}
+	__asm__ __volatile__( // F_CPU 8 MHz
+	    "1: sbiw %0, 1\n\t"
+	    "nop\n\t"
+	    "nop\n\t"
+	    "nop\n\t"
+	    "nop\n\t"
+	    "brne 1b\n\t"
+	    : "=w"(duration_us)
+	    : "0"(duration_us));
 
 	return;
 }
