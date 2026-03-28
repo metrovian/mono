@@ -10,4 +10,6 @@ src_writer = files(
 executable(
   'mono',
   src_writer,
-  include_directories: '.')
+  include_directories: '.',
+  install : true, 
+  install_dir : '/usr/local/bin/')
