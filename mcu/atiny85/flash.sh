@@ -7,7 +7,7 @@ hex_path="${build_dir}/mono-atiny85.hex"
 header_path="${script_dir}/example.h"
 
 if [ "$#" -gt 1 ]; then
-  echo "usage: $0 [input.abc]" >&2
+  echo "$0 <input.abc>" >&2
   exit 64
 fi
 
@@ -18,7 +18,7 @@ if [ "$#" -eq 1 ]; then
     exit 66
   fi
   if ! command -v mono >/dev/null 2>&1; then
-    echo "mono command not found; run meson install for writer first" >&2
+    echo "mono command not found" >&2
     exit 69
   fi
   mono "$abc_path" "$header_path"
@@ -36,5 +36,6 @@ fi
 
 avrdude -p t85 \
   -c linuxspi \
+  -B 100 \
   -P /dev/spidev0.0:/dev/gpiochip0 \
   -U "flash:w:${hex_path}:i"
