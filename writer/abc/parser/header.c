@@ -13,8 +13,8 @@ typedef struct {
 static void process_unit(const char *ptr, abc_duration_t *duration);
 static void process_tempo(const char *ptr, abc_duration_t *duration);
 static void process_accidental(const char *ptr, abc_ctx_t *ctx);
-static int minor_fifths(char root, char accidental);
-static int major_fifths(char root, char accidental);
+static int minor_fifths(char root, signed char accidental);
+static int major_fifths(char root, signed char accidental);
 
 extern void parser_read_header(abc_ctx_t *ctx) {
 	abc_duration_t duration = {
@@ -132,7 +132,7 @@ static void process_accidental(const char *ptr, abc_ctx_t *ctx) {
 	return;
 }
 
-static int minor_fifths(char root, char accidental) {
+static int minor_fifths(char root, signed char accidental) {
 	if (root < 'A' ||
 	    root > 'G') {
 		return 0;
@@ -141,7 +141,7 @@ static int minor_fifths(char root, char accidental) {
 	return major_fifths(root, accidental + 3);
 }
 
-static int major_fifths(char root, char accidental) {
+static int major_fifths(char root, signed char accidental) {
 	static const int semitone[7] = {9, 11, 0, 2, 4, 5, 7};
 	if (root < 'A' ||
 	    root > 'G') {
